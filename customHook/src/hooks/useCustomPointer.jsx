@@ -1,24 +1,35 @@
-/* 🏆 Snack 3: useCustomPointer() – Cambia il Cursore del Mouse
-Creare un custom hook che sostituisca il cursore del mouse con un componente personalizzato.
 
-Cosa deve fare?
-
-Prende in input una stringa o un JSX component (es. un’emoji, un'icona, un'animazione).
-Posiziona il componente al posto del puntatore del mouse.
-Il componente segue i movimenti del mouse. */
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 
 
-export default function useCustomPointer() {
+export default function useCustomPointer(customPointer) {
 
-    const [mousePosition, setMousePosition] = useState("")
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
 
+    useEffect(() => {
 
+        const updatePosition = (event) => {
+            setMousePosition({ x: event.clientX, y: event.clientY })
+        }
 
+        window.addEventListener('mousemove', updatePosition)
 
+        return () => { window.removeEventListener('mousemove', updatePosition) }
+    }, [])
+
+    return (
+        <div style={{
+            position: "fixed",
+            left: mousePosition.x,
+            top: mousePosition.y,
+            transform: "translate(-50%, -50%)",
+            cursor: "none",
+
+        }}
+        >{customPointer}</div>
+    )
 
 
 }
